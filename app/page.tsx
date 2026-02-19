@@ -1,65 +1,73 @@
-import Image from "next/image";
+import BetBasket from "./components/BetBasket";
+import LiveMatches from "./components/LiveMatches";
+import { groupMatchesByLeague } from "./lib/groupByLeague";
+import { mapEventsToMatches } from "./lib/mapEvents";
 
-export default function Home() {
+async function getMatches() {
+  const response = await fetch("http://localhost:3000/api/events", {
+    cache: "no-store",
+  });
+
+  const data = await response.json();
+  return mapEventsToMatches(data);
+}
+
+export default async function Home() {
+  const matches = await getMatches();
+  const groupedMatches = groupMatchesByLeague(matches);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-indigo-100/40 text-white p-6 items-center ">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+        {/* Lista meczy */}
+        <div className="grid md:col-span-3 bg-white/70 rounded-sm px-2 gap-2 border border-slate-200">
+          {/* Nagłówek */}
+          <div className="grid grid-cols-9 bg-primary p-3 rounded-sm">
+            <div className="col-span-5  flex justify-between">
+              <h2 className="font-semibold">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlSpace="preserve"
+                  fill="#149016"
+                  stroke="#149016"
+                  viewBox="0 0 122.88 122.88"
+                  className="w-5 inline mr-2"
+                >
+                  <path
+                    d="M61.44 0c16.97 0 32.33 6.88 43.44 18 11.12 11.12 18 26.48 18 43.44 0 16.97-6.88 32.33-18 43.44-11.12 11.12-26.48 18-43.44 18S29.11 116 18 104.88C6.88 93.77 0 78.41 0 61.44S6.88 29.11 18 18C29.11 6.88 44.47 0 61.44 0zm15.41 117.08-.12-.08 6.89-23.09-14.21-15.76L52.66 78 39.38 94.62l6.66 22.32-.15.1a57.8 57.8 0 0 0 15.55 2.12c5.34 0 10.51-.72 15.41-2.08zM12.22 91.61l24.34.12L49.28 75.8l-5.26-16.12-21.42-9.3-18.82 13.7a57.398 57.398 0 0 0 8.44 27.53zm4.55-66.73 7.4 22.14 19.98 8.68 15.44-11.97V20.94L40.51 7.63a57.85 57.85 0 0 0-19.89 13 57.416 57.416 0 0 0-3.85 4.25zM81.7 7.37l-18.4 13.4V43.7l14.5 11.21 20.81-8.92 7.18-21.49A57.757 57.757 0 0 0 81.7 7.37zm37.39 56.99-.02.01-19.98-14.55-19.81 8.49-6.08 18.03 13.73 15.23c.06.06.09.13.11.21l23.6-.11a57.62 57.62 0 0 0 8.45-27.31z"
+                    style={{
+                      fillRule: "evenodd",
+                      clipRule: "evenodd",
+                    }}
+                  />
+                </svg>
+                Piłka nożna
+              </h2>
+            </div>
+            <div className="bg-white/20  rounded-sm font-semi-bold col-span-3 py-1">
+              <div className="grid text-center grid-cols-3">
+                <div>1</div>
+                <div>X</div>
+                <div>2</div>
+              </div>
+            </div>
+          </div>
+          {/* Lista */}
+
+          {Object.entries(groupedMatches).map(([league, matches]) => (
+            <div key={league}>
+              <div className="bg-blue-700/10 text-primary font-bold p-2 rounded-sm">
+                {league}
+              </div>
+              <LiveMatches initialMatches={matches} />
+            </div>
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        {/* /Lista meczy */}
+        {/* Koszyk kuponu */}
+        <BetBasket />
+        {/* /Koszyk kuponu */}
+      </div>
+    </main>
   );
 }
