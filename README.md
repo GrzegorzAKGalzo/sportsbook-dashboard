@@ -1,13 +1,20 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Instrukcja uruchomienia
+## Instrukcja pobrania oraz uruchomienia
 
-Pobierz, rozpakuj i przejdź w konosli do wypakowanego folderu. Kolejno uruchom dane polecenie
-
+Pobierz repozytorium ręcznie, lub poprzez komendę.
+```bash
+git clone https://github.com/GrzegorzAKGalzo/sportsbook-dashboard
+```
+Przejdź do wypakowanego folderu.
+```bash
+cd sportsbook-dashboard
+```
+Zainstaluj potrzebne składniki.
 ```bash
 npm install
 ```
-
+Uruchom aplikacje.
 ```bash
 npm run dev
 ```
